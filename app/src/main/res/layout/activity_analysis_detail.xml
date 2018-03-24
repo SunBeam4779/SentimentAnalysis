@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_analysis_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_light"
+    tools:context="com.intsig.yann.analysis.AnalysisDetailActivity">
+    <ImageView
+        android:id="@+id/photo_ImageView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/image_height"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/timg"
+        android:background="@color/color_D7D7D7"/>
+    <TextView
+        android:id="@+id/photo_data_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_14"
+        android:text="@string/photo_data"
+        android:layout_alignBottom="@+id/photo_ImageView"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+    <TextView
+        android:id="@+id/detail_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@+id/photo_ImageView"
+        android:layout_marginTop="8dp"
+        android:textSize="@dimen/text_size_16"
+        android:textColor="@color/color_dark"
+        android:text="疲劳度为67，非常疲劳，建议应该注重休息，平常多喝水，调整睡眠，日常多进行运动，这样有助于改善身体机能"/>
+
+</RelativeLayout>

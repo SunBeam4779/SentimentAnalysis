@@ -1,0 +1,29 @@
+
+†"squid:ClassVariableVisibilityCheck"SMake BIG_IMG a static final constant or non-public and provide accessors if needed.(•»ıï8ù”éµ¥,
+ssquid:S3008"RRename this field "FATIGUE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œ×–âûÿÿÿÿ8¾Ï¶¥,
+vsquid:S3008"URename this field "TABLE_PATH" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ã„Ñûÿÿÿÿ8¾Ï¶¥,
+Msquid:S1444"1Make this "public static CREATE_DATE" field final(ï¼ß8¾Ï¶¥,
+Rsquid:S1444"1Make this "public static CONTENT_URI" field final(€›´áıÿÿÿÿ8Ãè¶¥,
+Psquid:S1444"/Make this "public static SMALL_IMG" field final(ĞÿôÚÿÿÿÿÿ8¾Ï¶¥,
+usquid:S3008"TRename this field "SMALL_IMG" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ĞÿôÚÿÿÿÿÿ8¾Ï¶¥,
+Š"squid:ClassVariableVisibilityCheck"WMake CREATE_DATE a static final constant or non-public and provide accessors if needed.(ï¼ß8Çåëµ¥,
+nsquid:S3008"RRename this field "BIG_IMG" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(•»ıï8¾Ï¶¥,
+wsquid:S3008"VRename this field "CONTENT_URI" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(€›´áıÿÿÿÿ8Ãè¶¥,
+Usquid:S1444"4Make this "public static CONTENT_URI_ID" field final(ü°•ıÿÿÿÿ8×ù¶¥,
+squid:S3008"`Rename this field "TABLE_PATH_WITH_PARAM" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(®£Ë•úÿÿÿÿ8¾Ï¶¥,
+‹"squid:ClassVariableVisibilityCheck"SMake FATIGUE a static final constant or non-public and provide accessors if needed.(œ×–âûÿÿÿÿ8ÌÃìµ¥,
+\squid:S1444";Make this "public static TABLE_PATH_WITH_PARAM" field final(®£Ë•úÿÿÿÿ8¾Ï¶¥,
+Vsquid:S1118":Add a private constructor to hide the implicit public one.(ıÓ±ë8×ù¶¥,
+Lsquid:S1444"0Make this "public static TABLE_NAME" field final(çö©»8ôÂ…¸¥,
+‰"squid:ClassVariableVisibilityCheck"VMake TABLE_NAME a static final constant or non-public and provide accessors if needed.(çö©»8ôÂ…¸¥,
+zsquid:S3008"YRename this field "CONTENT_URI_ID" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ü°•ıÿÿÿÿ8×ù¶¥,
+Nsquid:S1444"-Make this "public static FATIGUE" field final(œ×–âûÿÿÿÿ8¾Ï¶¥,
+Isquid:S1444"-Make this "public static BIG_IMG" field final(•»ıï8¾Ï¶¥,
+"squid:ClassVariableVisibilityCheck"WMake CONTENT_URI a static final constant or non-public and provide accessors if needed.(€›´áıÿÿÿÿ8ı×”¶¥,
+’"squid:ClassVariableVisibilityCheck"ZMake CONTENT_URI_ID a static final constant or non-public and provide accessors if needed.(ü°•ıÿÿÿÿ8ı×”¶¥,
+"squid:ClassVariableVisibilityCheck"UMake SMALL_IMG a static final constant or non-public and provide accessors if needed.(ĞÿôÚÿÿÿÿÿ8ÅÜèµ¥,
+qsquid:S3008"URename this field "TABLE_NAME" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(çö©»8ôÂ…¸¥,
+Qsquid:S1444"0Make this "public static TABLE_PATH" field final(ã„Ñûÿÿÿÿ8¾Ï¶¥,
+"squid:ClassVariableVisibilityCheck"VMake TABLE_PATH a static final constant or non-public and provide accessors if needed.(ã„Ñûÿÿÿÿ8³‰¶¥,
+™"squid:ClassVariableVisibilityCheck"aMake TABLE_PATH_WITH_PARAM a static final constant or non-public and provide accessors if needed.(®£Ë•úÿÿÿÿ8ÆéŒ¶¥,
+rsquid:S3008"VRename this field "CREATE_DATE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ï¼ß8¾Ï¶¥,

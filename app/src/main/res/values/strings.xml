@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SentimentAnalysis</string>
+    <string name="photo_data">拍摄于:%s</string>
+</resources>
