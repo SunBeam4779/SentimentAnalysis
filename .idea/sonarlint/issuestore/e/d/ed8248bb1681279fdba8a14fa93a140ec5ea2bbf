@@ -1,11 +1,0 @@
-
-gsquid:S1301"KReplace this "switch" statement by "if" statements to increase readability.(±ŸğÅ8Çî–¸¥,
-Wsquid:S2696"6Make the enclosing method "static" or remove this set.(ôœå¾øÿÿÿÿ8Ğˆ¨¸¥,
-"squid:ClassVariableVisibilityCheck"UMake AUTHORITY a static final constant or non-public and provide accessors if needed.(áµ¨Ğúÿÿÿÿ8§×Õ¶¥,
-Wsquid:S2696"6Make the enclosing method "static" or remove this set.(øÀğáûÿÿÿÿ8’ß¥¸¥,
-Ssquid:S1135"2Complete the task associated to this TODO comment.(ƒŠ® úÿÿÿÿ8–¥–¸¥,
-„"squid:ClassVariableVisibilityCheck"QMake where a static final constant or non-public and provide accessors if needed.(ÀÛ 8š÷ã¶¥,
-usquid:S3008"TRename this field "AUTHORITY" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(áµ¨Ğúÿÿÿÿ8§×Õ¶¥,
-Isquid:S1199"-Extract this nested code block into a method.(Á¡‡ƒ8ßÄ‹¸¥,
-Psquid:S1444"/Make this "public static AUTHORITY" field final(áµ¨Ğúÿÿÿÿ8§×Õ¶¥,
-„"squid:ClassVariableVisibilityCheck"QMake table a static final constant or non-public and provide accessors if needed.(±î8š÷ã¶¥,
