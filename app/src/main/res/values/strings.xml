@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">SentimentAnalysis</string>
     <string name="photo_data">拍摄于:%s</string>
+    <string name="no_data">暂时没有数据</string>
+    <string name="photoPickerNotFoundText">沒有可用的图片！</string>
 </resources>

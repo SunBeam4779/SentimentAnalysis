@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+    <ImageView
+        android:id="@+id/small_img_ImageView"
+        android:layout_width="90dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_vertical"
+        android:src="@mipmap/timg"/>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/status_detail_TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/color_dark"
+            android:textSize="@dimen/text_size_16"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="疲劳度为67，非常疲劳，建议应该注重休息，平常多喝水，调整睡眠，日常多进行运动，这样有助于改善身体机能"/>
+        <TextView
+            android:id="@+id/photo_date_TextView"
+            android:gravity="right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_14"
+            android:textColor="@color/color_9E9E9E"
+            android:text="@string/photo_data"/>
+    </LinearLayout>
+
+</LinearLayout>

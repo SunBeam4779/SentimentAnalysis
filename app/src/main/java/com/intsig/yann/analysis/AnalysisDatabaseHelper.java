@@ -42,7 +42,7 @@ public class AnalysisDatabaseHelper extends SQLiteOpenHelper {
 
     public static AnalysisDatabaseHelper getInstance(Context context) {
         if (instance == null) {
-            synchronized (instance) {
+            synchronized (AnalysisDatabaseHelper.class) {
                 if (instance == null) {
                     instance = new AnalysisDatabaseHelper(context);
                 }
