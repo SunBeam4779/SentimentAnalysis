@@ -3,4 +3,7 @@
     <string name="photo_data">拍摄于:%s</string>
     <string name="no_data">暂时没有数据</string>
     <string name="photoPickerNotFoundText">沒有可用的图片！</string>
+    <string name="need_sdcard_permission">需要sd卡权限</string>
+    <string name="save">保存</string>
+    <string name="analysis">分析中</string>
 </resources>

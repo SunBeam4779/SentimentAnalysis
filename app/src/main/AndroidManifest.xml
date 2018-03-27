@@ -23,7 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.intsig.yann.analysis.AnalysisDetailActivity">
+        <activity android:name="com.intsig.yann.analysis.AnalysisDetailActivity"
+            android:label="详情页">
 
         </activity>
     </application>

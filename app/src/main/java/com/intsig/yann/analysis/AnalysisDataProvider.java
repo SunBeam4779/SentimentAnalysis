@@ -12,6 +12,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 /**
  * Created by yann_qiu on 2018/3/24.
@@ -77,7 +78,7 @@ public class AnalysisDataProvider extends ContentProvider {
         SQLiteDatabase db = openHelper.getWritableDatabase();
         Cursor cursor = db.query(getTableAndWhereOutParameter.table, projection, getTableAndWhereOutParameter.where, selectionArgs, null, null, sortOrder);
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
-        return null;
+        return cursor;
     }
 
     private void getTableAndWhere(Uri uri, int match, String userWhere, GetTableAndWhereOutParameter out) {
@@ -88,7 +89,8 @@ public class AnalysisDataProvider extends ContentProvider {
                 break;
             case ANALYSIS_ID:
                 out.table = AnalysisData.TABLE_NAME;
-                out.where = userWhere + " AND " + AnalysisData._ID + " == " + uri.getLastPathSegment();
+                out.where = TextUtils.isEmpty(userWhere) ? AnalysisData._ID + " == " + uri.getLastPathSegment() :
+                        AnalysisData._ID + " == " + uri.getLastPathSegment() + " AND " + userWhere;
                 break;
             default:
                 throw new IllegalStateException("Unknown URL" + uri);

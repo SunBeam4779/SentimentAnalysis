@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int LOADER_ID_DATA_LOADER = 101;
 
-    private static final int REQUEST_PERMISSION_CAMERA = 102;
+    private static final int REQUEST_PERMISSION = 102;
     private static final int REQUEST_CAMERA = 103;
     private static final int REQUEST_CROP = 104;
 
@@ -52,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
         initData();
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(LOADER_ID_DATA_LOADER, null, analysisDataCallback);
+    }
 
     private void initFromXml() {
         emptyStatusRelativeLayout = (RelativeLayout) findViewById(R.id.empty_status_RelativeLayout);
@@ -69,13 +73,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                         PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA);
+                    requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION);
                 } else {
                     takePhoto();
                 }
             }
         });
+        getSdcardPermission();
     }
+
+    private void getSdcardPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+        }
+    }
+
 
     private void initData() {
         analysisDataCallback = new AnalysisDataCallback();
@@ -96,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                     return cursor;
                 }
             };
-            loader.setUpdateThrottle(1500);
             return loader;
         }
 
@@ -150,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 PHOTO_DIR.mkdirs();
                 Util.copyFile(TempCropFile, Util.THUMB_IMG + "/" + time + ".jpg");
                 new File(cropFilePath).delete();
+                AnalysisDetailActivity.startActivity(this, time + ".jpg");
             }
         }
     }
@@ -157,12 +170,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PERMISSION_CAMERA:
+            case REQUEST_PERMISSION:
                 if (grantResults.length > 0) {
                     for(int i = 0; i < permissions.length ; i++){
-                        if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) && PermissionChecker.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_GRANTED){
+                        if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_GRANTED){
                             takePhoto();
                             return;
+                        } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
+                            finish();
                         }
                     }
                 }
@@ -183,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
             currentPhotoFile = new File(PHOTO_DIR, Util.getDateAsName() + ".jpg");
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION );
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentPhotoFile));
             startActivityForResult(intent, REQUEST_CAMERA);
