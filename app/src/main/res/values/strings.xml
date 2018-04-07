@@ -6,4 +6,14 @@
     <string name="need_sdcard_permission">需要sd卡权限</string>
     <string name="save">保存</string>
     <string name="analysis">分析中</string>
+    <string name="launch_title">人体疲劳自测程序</string>
+    <string name="author">西安交通大学生物医学工程</string>
+    <string name="login_title">用户名</string>
+    <string name="login_hint">请输入用户名</string>
+    <string name="login">进入</string>
+    <string name="new_account">新的用户</string>
+    <string name="photo">拍摄</string>
+    <string name="sure">确定</string>
+    <string name="error_account">无效的用户名，请重新输入！</string>
+    <string name="unComplete_info">请完善信息！</string>
 </resources>

@@ -23,7 +23,11 @@ public class AnalysisDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + AnalysisData.TABLE_NAME + " (" + AnalysisData._ID + " INTEGER PRIMARY KEY,"
                 + AnalysisData.SMALL_IMG + " TEXT," + AnalysisData.BIG_IMG + " TEXT," + AnalysisData.CREATE_DATE
-                + " INTEGER DEFAULT 0," + AnalysisData.FATIGUE + " TEXT" + ");");
+                + " INTEGER DEFAULT 0," + AnalysisData.FATIGUE + " TEXT," + AnalysisData.ACCOUNT_ID + " INTEGER );");
+
+        db.execSQL("CREATE TABLE " + AccountData.TABLE_NAME + " (" + AccountData._ID + " INTEGER PRIMARY KEY,"
+                + AccountData.SMALL_IMG + " TEXT," + AccountData.BIG_IMG + " TEXT," + AccountData.CREATE_DATE
+                + " INTEGER DEFAULT 0," + AccountData.ACCOUNT_NAME + " TEXT" + ");");
         db.execSQL("CREATE INDEX IF NOT EXISTS analysis_index_small_img" + " ON " + AnalysisData.TABLE_NAME + " ( "
                 + AnalysisData.SMALL_IMG + ");");
         db.execSQL("CREATE INDEX IF NOT EXISTS analysis_index_big_img" + " ON " + AnalysisData.TABLE_NAME + " ( "
@@ -32,6 +36,17 @@ public class AnalysisDatabaseHelper extends SQLiteOpenHelper {
                 + AnalysisData.CREATE_DATE + ");");
         db.execSQL("CREATE INDEX IF NOT EXISTS analysis_index_fatigue" + " ON " + AnalysisData.TABLE_NAME + " ( "
                 + AnalysisData.FATIGUE + ");");
+        db.execSQL("CREATE INDEX IF NOT EXISTS analysis_index_account_id" + " ON " + AnalysisData.TABLE_NAME + " ( "
+                + AnalysisData.ACCOUNT_ID + ");");
+
+        db.execSQL("CREATE INDEX IF NOT EXISTS account_index_small_img" + " ON " + AccountData.TABLE_NAME + " ( "
+                + AccountData.SMALL_IMG + ");");
+        db.execSQL("CREATE INDEX IF NOT EXISTS account_index_big_img" + " ON " + AccountData.TABLE_NAME + " ( "
+                + AccountData.BIG_IMG + ");");
+        db.execSQL("CREATE INDEX IF NOT EXISTS account_index_create_date" + " ON " + AccountData.TABLE_NAME + " ( "
+                + AccountData.CREATE_DATE + ");");
+        db.execSQL("CREATE INDEX IF NOT EXISTS account_index_account_name" + " ON " + AccountData.TABLE_NAME + " ( "
+                + AccountData.ACCOUNT_NAME + ");");
 
     }
 

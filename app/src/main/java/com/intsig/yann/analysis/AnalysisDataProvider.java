@@ -26,6 +26,9 @@ public class AnalysisDataProvider extends ContentProvider {
     private static final UriMatcher sUriMatcher;
     private static final int ANALYSIS = 1;
     private static final int ANALYSIS_ID = 2;
+    private static final int ANALYSIS_ACCOUNT = 3;
+    private static final int ACCOUNT = 4;
+    private static final int ACCOUNT_NAME = 5;
     public static final int MSG_ANALYSIS = 0;
     private static final int NOTIFY_INTERAL = 3000;
     private long lastAnalysisNotifyTime = 0;
@@ -57,6 +60,9 @@ public class AnalysisDataProvider extends ContentProvider {
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sUriMatcher.addURI(AUTHORITY, AnalysisData.TABLE_PATH, ANALYSIS);
         sUriMatcher.addURI(AUTHORITY, AnalysisData.TABLE_PATH_WITH_PARAM, ANALYSIS_ID);
+        sUriMatcher.addURI(AUTHORITY, AnalysisData.TABLE_PATH_WITH_ACCOUNT, ANALYSIS_ACCOUNT);
+        sUriMatcher.addURI(AUTHORITY, AccountData.TABLE_PATH_WITH_NAME, ACCOUNT_NAME);
+        sUriMatcher.addURI(AUTHORITY, AccountData.TABLE_PATH, ACCOUNT);
     }
 
     @Override
@@ -92,6 +98,20 @@ public class AnalysisDataProvider extends ContentProvider {
                 out.where = TextUtils.isEmpty(userWhere) ? AnalysisData._ID + " == " + uri.getLastPathSegment() :
                         AnalysisData._ID + " == " + uri.getLastPathSegment() + " AND " + userWhere;
                 break;
+            case ANALYSIS_ACCOUNT:
+                out.table = AnalysisData.TABLE_NAME;
+                out.where = TextUtils.isEmpty(userWhere) ? AnalysisData.ACCOUNT_ID + " == " + uri.getLastPathSegment() :
+                        AnalysisData.ACCOUNT_ID + " == " + uri.getLastPathSegment() + " AND " + userWhere;
+                break;
+            case ACCOUNT_NAME:
+                out.table = AccountData.TABLE_NAME;
+                out.where = TextUtils.isEmpty(userWhere) ? AccountData.ACCOUNT_NAME + " == '" + uri.getLastPathSegment() + "'" :
+                        AnalysisData._ID + " == '" + uri.getLastPathSegment() + "' AND " + userWhere;
+                break;
+            case ACCOUNT:
+                out.table = AccountData.TABLE_NAME;
+                out.where = userWhere;
+                break;
             default:
                 throw new IllegalStateException("Unknown URL" + uri);
         }
@@ -118,7 +138,8 @@ public class AnalysisDataProvider extends ContentProvider {
         Uri newUri = null;
         switch (sUriMatcher.match(uri)) {
             case ANALYSIS:
-            case ANALYSIS_ID: {
+            case ANALYSIS_ID:
+            case ANALYSIS_ACCOUNT:{
                 if (!initialValues.containsKey(AnalysisData.CREATE_DATE)) {
                     initialValues.put(AnalysisData.CREATE_DATE, System.currentTimeMillis());
                 }
@@ -128,6 +149,15 @@ public class AnalysisDataProvider extends ContentProvider {
                 }
                 break;
             }
+            case ACCOUNT:
+                if (!initialValues.containsKey(AccountData.CREATE_DATE)) {
+                    initialValues.put(AccountData.CREATE_DATE, System.currentTimeMillis());
+                }
+                long rowId = db.insert(AccountData.TABLE_NAME, null, initialValues);
+                if (rowId > 0) {
+                    newUri = ContentUris.withAppendedId(AccountData.CONTENT_URI, rowId);
+                }
+                break;
             default:
                 throw new IllegalStateException("Unknown URL" + uri);
 

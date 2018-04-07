@@ -27,10 +27,10 @@ import android.widget.Toast;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class AnalysisHolderActivity extends AppCompatActivity {
 
+    public static final String ACCOUNT_ID = "ACCOUNT_ID";
     private static final int LOADER_ID_DATA_LOADER = 101;
-
     private static final int REQUEST_PERMISSION = 102;
     private static final int REQUEST_CAMERA = 103;
     private static final int REQUEST_CROP = 104;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                        PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION);
                 } else {
                     takePhoto();
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getSdcardPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
         }
     }
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String[] PROJECTION =
                     new String[] {AnalysisData._ID, AnalysisData.SMALL_IMG, AnalysisData.CREATE_DATE, AnalysisData.FATIGUE};
-            CursorLoader loader = new CursorLoader(MainActivity.this, AnalysisData.CONTENT_URI, PROJECTION, null,
+            CursorLoader loader = new CursorLoader(AnalysisHolderActivity.this, AnalysisData.CONTENT_URI, PROJECTION, null,
                     null, AnalysisData.CREATE_DATE + " DESC") {
                 @Override
                 public Cursor loadInBackground() {
@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                     currentPhotoFile.delete();
                 }
                 String time = Util.getDateAsName();
-                Util.copyFile(TempCropFile, Util.ORIGINAL_IMG + "/" + time + ".jpg");
                 File PHOTO_DIR = new File(Util.THUMB_IMG);
                 PHOTO_DIR.mkdirs();
                 Util.copyFile(TempCropFile, Util.THUMB_IMG + "/" + time + ".jpg");
@@ -250,4 +249,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
     }
+
+    public static void startActivity(Activity activity, long acountId) {
+        Intent intent = new Intent(activity, AnalysisHolderActivity.class);
+        intent.putExtra(ACCOUNT_ID, acountId);
+        activity.startActivity(intent);
+    }
+
+
 }

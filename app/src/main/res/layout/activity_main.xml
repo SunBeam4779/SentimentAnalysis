@@ -4,7 +4,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.intsig.yann.analysis.MainActivity">
+    tools:context="com.intsig.yann.analysis.AnalysisHolderActivity">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_RecyclerView"
         android:layout_width="match_parent"
