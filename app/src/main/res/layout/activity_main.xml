@@ -5,13 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.intsig.yann.analysis.AnalysisHolderActivity">
+    <include
+        android:id="@+id/me_LineLayout"
+        layout="@layout/analysis_viewholder"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:scrollbars="none"
-        android:layout_above="@+id/bottom_line_View"/>
+        android:layout_above="@+id/bottom_line_View"
+        android:layout_below="@+id/me_LineLayout"/>
     <RelativeLayout
         android:id="@+id/empty_status_RelativeLayout"
         android:layout_width="match_parent"
@@ -54,6 +58,5 @@
             android:layout_centerHorizontal="true"
             android:clickable="true"
             android:src="@drawable/pick_icon_background" />
-
     </RelativeLayout>
 </RelativeLayout>

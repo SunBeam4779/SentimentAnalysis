@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -40,8 +41,12 @@ public class AnalysisHolderActivity extends AppCompatActivity {
     private ImageView photoImageView;
     private AnalysisDataAdapter analysisDataAdapter;
     private AnalysisDataCallback analysisDataCallback = null;
+    private ImageView mySmallImagView;
+    private TextView nameTextView;
+    private TextView dateTextView;
     private File currentPhotoFile;
     public static String TempCropFile = Util.TEMP_IMG + "tmp.jpg";
+    private long accountId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,10 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         emptyStatusRelativeLayout = (RelativeLayout) findViewById(R.id.empty_status_RelativeLayout);
         historyRecyclerView = (RecyclerView) findViewById(R.id.history_RecyclerView);
         photoImageView = (ImageView) findViewById(R.id.photo_image);
+        mySmallImagView = (ImageView)findViewById(R.id.small_img_ImageView);
+        nameTextView = (TextView) findViewById(R.id.status_detail_TextView);
+        dateTextView = (TextView)findViewById(R.id.photo_date_TextView);
+
     }
 
     private void initView() {
@@ -91,8 +100,31 @@ public class AnalysisHolderActivity extends AppCompatActivity {
 
 
     private void initData() {
+        if (getIntent() != null) {
+            accountId = getIntent().getLongExtra(ACCOUNT_ID, 0L);
+        }
+        if (accountId < 1) {
+            Toast.makeText(this, R.string.error_account, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        refreshMyInfo();
         analysisDataCallback = new AnalysisDataCallback();
         getSupportLoaderManager().restartLoader(LOADER_ID_DATA_LOADER, null, analysisDataCallback);
+    }
+
+    private void refreshMyInfo() {
+        Cursor cursor = getContentResolver().query(AccountData.CONTENT_URI, null, AccountData._ID + "=?",
+                new String[]{accountId + ""}, null);
+        if (cursor == null || !cursor.moveToFirst()) {
+            Toast.makeText(this, R.string.error_account, Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        mySmallImagView.setImageBitmap(Util.loadBitmap(cursor.getString(cursor.getColumnIndex(AccountData.SMALL_IMG))));
+        nameTextView.setText(cursor.getString(cursor.getColumnIndex(AccountData.ACCOUNT_NAME)));
+        dateTextView.setText(getString(R.string.photo_data,
+                Util.parseDateString(cursor.getLong(cursor.getColumnIndex(AccountData.CREATE_DATE)))));
     }
 
     private class AnalysisDataCallback implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -101,8 +133,8 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String[] PROJECTION =
                     new String[] {AnalysisData._ID, AnalysisData.SMALL_IMG, AnalysisData.CREATE_DATE, AnalysisData.FATIGUE};
-            CursorLoader loader = new CursorLoader(AnalysisHolderActivity.this, AnalysisData.CONTENT_URI, PROJECTION, null,
-                    null, AnalysisData.CREATE_DATE + " DESC") {
+            CursorLoader loader = new CursorLoader(AnalysisHolderActivity.this, AnalysisData.CONTENT_URI, PROJECTION,
+                    AnalysisData.ACCOUNT_ID + "=?", new String[] {accountId + ""}, AnalysisData.CREATE_DATE + " DESC") {
                 @Override
                 public Cursor loadInBackground() {
                     Cursor cursor = super.loadInBackground();

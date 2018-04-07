@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +28,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
     private ImageView photoImageView;
     private TextView photoDateTextView;
     private TextView detailTextView;
+    private Button saveButton;
     private ProgressDialog progressDialog;
 
 
@@ -56,26 +57,9 @@ public class AnalysisDetailActivity extends AppCompatActivity {
             } else {
                 finish();
             }
+        } else {
+            saveButton.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (isAnalysis) {
-            getMenuInflater().inflate(R.menu.ac_save, menu);
-        }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.save) {
-            saveResult();
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void saveResult() {
@@ -91,6 +75,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         photoImageView = (ImageView) findViewById(R.id.photo_ImageView);
         photoDateTextView = (TextView) findViewById(R.id.photo_date_TextView);
         detailTextView = (TextView) findViewById(R.id.detail_TextView);
+        saveButton = (Button)findViewById(R.id.save_Button);
     }
 
     private void initData() {
@@ -100,6 +85,14 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         dataId = getIntent().getLongExtra(DATA_ID, 0L);
         imageName = getIntent().getStringExtra(IMAGE_NAME);
         if (!TextUtils.isEmpty(imageName)) {
+            saveButton.setVisibility(View.VISIBLE);
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    saveResult();
+                    finish();
+                }
+            });
             isAnalysis = true;
             showProgress();
             new Handler().postDelayed(new Runnable() {
@@ -115,6 +108,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
                 }
             }, 3000);
         } else {
+            saveButton.setVisibility(View.GONE);
             isAnalysis = false;
         }
     }

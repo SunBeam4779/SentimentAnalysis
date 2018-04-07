@@ -17,9 +17,6 @@ public class AnalysisData implements BaseColumns {
     public static String ACCOUNT_ID = "account_id";
     public static String TABLE_PATH = "analysis_data";
     public static String TABLE_PATH_WITH_PARAM = "analysis_data/#";
-    public static String TABLE_PATH_WITH_ACCOUNT = "analysis_data/account/#";
     public static Uri CONTENT_URI = Uri.parse("content://" + AnalysisDataProvider.AUTHORITY + "/" + TABLE_PATH);
     public static Uri CONTENT_URI_ID = Uri.parse("content://" + AnalysisDataProvider.AUTHORITY + "/" + TABLE_PATH_WITH_PARAM);
-    public static Uri CONTENT_URI_ACCOUNT_ID = Uri.parse("content://" + AnalysisDataProvider.AUTHORITY + "/" + TABLE_PATH_WITH_ACCOUNT);
-
 }
