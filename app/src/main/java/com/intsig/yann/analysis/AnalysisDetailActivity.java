@@ -19,14 +19,16 @@ public class AnalysisDetailActivity extends AppCompatActivity {
 
     public static final String DATA_ID = "DATA_ID";
     public static final String IMAGE_NAME = "IMAGE_NAME";
+    public static final String ACCOUNT_ID = "ACCOUNT_ID";
 
     private long dataId;
+    private long accountId;
     private String imageName;
     private long detailDate;
     private String detailResult;
     private boolean isAnalysis;
     private ImageView photoImageView;
-    private TextView photoDateTextView;
+    private ImageView myPhotoImageView;
     private TextView detailTextView;
     private Button saveButton;
     private ProgressDialog progressDialog;
@@ -52,7 +54,6 @@ public class AnalysisDetailActivity extends AppCompatActivity {
                 String status = cursor.getString(cursor.getColumnIndex(AnalysisData.FATIGUE));
                 photoImageView.setImageBitmap(Util.loadBitmap(bigImage));
                 detailTextView.setText(status);
-                photoDateTextView.setText(getString(R.string.photo_data, Util.parseDateString(date)));
                 Util.safeCloseCursor(cursor);
             } else {
                 finish();
@@ -68,12 +69,13 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         contentValues.put(AnalysisData.FATIGUE, detailResult);
         contentValues.put(AnalysisData.BIG_IMG, Util.ORIGINAL_IMG + "/" + imageName);
         contentValues.put(AnalysisData.SMALL_IMG, Util.THUMB_IMG + "/" +  imageName);
+        contentValues.put(AnalysisData.ACCOUNT_ID, accountId);
         getContentResolver().insert(AnalysisData.CONTENT_URI, contentValues);
     }
 
     private void initFromXml() {
         photoImageView = (ImageView) findViewById(R.id.photo_ImageView);
-        photoDateTextView = (TextView) findViewById(R.id.photo_date_TextView);
+        myPhotoImageView = (ImageView) findViewById(R.id.my_photo_ImageView);
         detailTextView = (TextView) findViewById(R.id.detail_TextView);
         saveButton = (Button)findViewById(R.id.save_Button);
     }
@@ -84,6 +86,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         }
         dataId = getIntent().getLongExtra(DATA_ID, 0L);
         imageName = getIntent().getStringExtra(IMAGE_NAME);
+        accountId = getIntent().getLongExtra(ACCOUNT_ID, 0L);
         if (!TextUtils.isEmpty(imageName)) {
             saveButton.setVisibility(View.VISIBLE);
             saveButton.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +106,6 @@ public class AnalysisDetailActivity extends AppCompatActivity {
                     detailResult = "疲劳度为67，非常疲劳，建议应该注重休息，平常多喝水，调整睡眠，日常多进行运动，这样有助于改善身体机能";
                     detailTextView.setText(detailResult);
                     detailDate = System.currentTimeMillis();
-                    photoDateTextView.setText(Util.parseDateString(detailDate));
 
                 }
             }, 3000);
@@ -111,6 +113,16 @@ public class AnalysisDetailActivity extends AppCompatActivity {
             saveButton.setVisibility(View.GONE);
             isAnalysis = false;
         }
+        refreshMyPhoto();
+    }
+
+    private void refreshMyPhoto() {
+        Cursor cursor = getContentResolver().query(AccountData.CONTENT_URI, null, AccountData._ID + "=?",
+                new String[]{accountId + ""}, null);
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            myPhotoImageView.setImageBitmap(Util.loadBitmap(cursor.getString(cursor.getColumnIndex(AccountData.BIG_IMG))));
+        }
+        Util.safeCloseCursor(cursor);
     }
 
     private void showProgress() {
@@ -129,15 +141,17 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         }
     }
 
-    public static void startActivity(Activity activity, long dataId) {
+    public static void startActivity(Activity activity, long dataId, long accountId) {
         Intent intent = new Intent(activity, AnalysisDetailActivity.class);
         intent.putExtra(DATA_ID, dataId);
+        intent.putExtra(ACCOUNT_ID, accountId);
         activity.startActivity(intent);
     }
 
-    public static void startActivity(Activity activity, String imageName) {
+    public static void startActivity(Activity activity, String imageName, long accountId) {
         Intent intent = new Intent(activity, AnalysisDetailActivity.class);
         intent.putExtra(IMAGE_NAME, imageName);
+        intent.putExtra(ACCOUNT_ID, accountId);
         activity.startActivity(intent);
     }
 }

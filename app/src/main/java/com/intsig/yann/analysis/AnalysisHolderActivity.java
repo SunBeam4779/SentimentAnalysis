@@ -94,6 +94,10 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         getSdcardPermission();
     }
 
+    public long getAccountId() {
+        return accountId;
+    }
+
     private void getSdcardPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -126,7 +130,7 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         }
         mySmallImagView.setImageBitmap(Util.loadBitmap(cursor.getString(cursor.getColumnIndex(AccountData.SMALL_IMG))));
         nameTextView.setText(cursor.getString(cursor.getColumnIndex(AccountData.ACCOUNT_NAME)));
-        dateTextView.setText(getString(R.string.photo_data,
+        dateTextView.setText(getString(R.string.create_data,
                 Util.parseDateString(cursor.getLong(cursor.getColumnIndex(AccountData.CREATE_DATE)))));
         changeAccountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,15 +200,16 @@ public class AnalysisHolderActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(cropFilePath) || !new File(cropFilePath).exists()) {
                     return;
                 }
-                if (currentPhotoFile != null && currentPhotoFile.exists()) {
-                    currentPhotoFile.delete();
-                }
                 String time = Util.getDateAsName();
                 File PHOTO_DIR = new File(Util.THUMB_IMG);
                 PHOTO_DIR.mkdirs();
                 Util.copyFile(TempCropFile, Util.THUMB_IMG + "/" + time + ".jpg");
+                Util.copyFile(currentPhotoFile.getAbsolutePath(), Util.ORIGINAL_IMG + "/" + time + ".jpg");
                 new File(cropFilePath).delete();
-                AnalysisDetailActivity.startActivity(this, time + ".jpg");
+                if (currentPhotoFile != null && currentPhotoFile.exists()) {
+                    currentPhotoFile.delete();
+                }
+                AnalysisDetailActivity.startActivity(this, time + ".jpg", accountId);
             }
         }
     }

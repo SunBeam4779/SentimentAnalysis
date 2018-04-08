@@ -6,29 +6,13 @@
     android:layout_height="match_parent"
     android:background="@color/color_light"
     tools:context="com.intsig.yann.analysis.AnalysisDetailActivity">
-    <ImageView
-        android:id="@+id/photo_ImageView"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/image_height"
-        android:scaleType="fitCenter"
-        android:src="@mipmap/timg"
-        android:background="@color/color_D7D7D7"/>
-    <TextView
-        android:id="@+id/photo_date_TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_14"
-        android:text="@string/photo_data"
-        android:layout_alignBottom="@+id/photo_ImageView"
-        android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
     <TextView
         android:id="@+id/detail_TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:layout_below="@+id/photo_ImageView"
+        android:layout_below="@+id/image_LinearLayout"
         android:layout_marginTop="8dp"
         android:textSize="@dimen/text_size_16"
         android:textColor="@color/color_dark"
@@ -39,11 +23,60 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_height="40dp"
-        android:text="@string/photo"
+        android:text="@string/save"
         android:textColor="@color/color_fafafa"
         android:textSize="@dimen/text_size_16"
         android:background="@color/color_1da9ff"
         android:gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"/>
+
+    <LinearLayout
+        android:id="@+id/image_LinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:paddingTop="16dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/photo_ImageView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_height"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/timg"
+                android:background="@color/color_D7D7D7"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/test_photo"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/text_size_14"
+                android:gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/my_photo_ImageView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_height"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/timg"
+                android:background="@color/color_D7D7D7"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ori_photo"
+                android:layout_gravity="center_horizontal"
+                android:textSize="@dimen/text_size_14"
+                android:gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

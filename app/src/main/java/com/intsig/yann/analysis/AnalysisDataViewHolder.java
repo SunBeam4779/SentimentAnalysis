@@ -31,7 +31,8 @@ public class AnalysisDataViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AnalysisDetailActivity.startActivity((Activity) itemView.getContext(), id);
+                AnalysisDetailActivity.startActivity((Activity) itemView.getContext(), id,
+                        ((AnalysisHolderActivity)itemView.getContext()).getAccountId());
             }
         });
     }

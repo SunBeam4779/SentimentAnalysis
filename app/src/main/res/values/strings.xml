@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SentimentAnalysis</string>
     <string name="photo_data">拍摄于:%s</string>
+    <string name="create_data">创建于:%s</string>
     <string name="no_data">暂时没有数据</string>
     <string name="photoPickerNotFoundText">沒有可用的图片！</string>
     <string name="need_sdcard_permission">需要sd卡权限</string>
@@ -17,5 +18,7 @@
     <string name="error_account">无效的用户名，请重新输入！</string>
     <string name="unComplete_info">请完善信息！</string>
     <string name="change_account">切换账号</string>
-    <string name="go_login">去登录</string>
+    <string name="go_login">已有账号去登录</string>
+    <string name="ori_photo">原型照片</string>
+    <string name="test_photo">测试照片</string>
 </resources>
