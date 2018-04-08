@@ -5,9 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.intsig.yann.analysis.AnalysisHolderActivity">
-    <include
+    <LinearLayout
         android:id="@+id/me_LineLayout"
-        layout="@layout/analysis_viewholder"/>
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+        <ImageView
+            android:id="@+id/small_img_ImageView"
+            android:layout_width="90dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/timg"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/status_detail_TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/color_dark"
+                android:textSize="@dimen/text_size_16"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="测试"/>
+            <TextView
+                android:id="@+id/photo_date_TextView"
+                android:gravity="left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/color_9E9E9E"
+                android:text="@string/photo_data"/>
+            <TextView
+                android:id="@+id/change_account_TextView"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@color/color_9E9E9E"
+                android:text="@string/change_account"/>
+        </LinearLayout>
+
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_RecyclerView"
         android:layout_width="match_parent"

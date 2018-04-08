@@ -124,5 +124,17 @@
             android:textSize="@dimen/text_size_16"
             android:background="@color/color_1da9ff"
             android:gravity="center"/>
+        <Button
+            android:id="@+id/go_login_Button"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_height="40dp"
+            android:text="@string/go_login"
+            android:textColor="@color/color_fafafa"
+            android:textSize="@dimen/text_size_16"
+            android:background="@color/color_1da9ff"
+            android:gravity="center"/>
     </LinearLayout>
 </LinearLayout>

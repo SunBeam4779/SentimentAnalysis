@@ -16,4 +16,6 @@
     <string name="sure">确定</string>
     <string name="error_account">无效的用户名，请重新输入！</string>
     <string name="unComplete_info">请完善信息！</string>
+    <string name="change_account">切换账号</string>
+    <string name="go_login">去登录</string>
 </resources>

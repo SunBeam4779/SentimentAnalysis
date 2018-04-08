@@ -35,6 +35,7 @@ import java.io.File;
 public class LoginOrRegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     public static final String ACCOUNT_NAME = "ACCOUNT_NAME";
+    public static final String EXTRA_IS_LOGIN = "EXTRA_IS_LOGIN";
     private static final int REQUEST_PERMISSION = 102;
     private static final int REQUEST_CAMERA = 103;
     private static final int REQUEST_CROP = 104;
@@ -49,6 +50,7 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
     private EditText registerEditText;
     private Button photoButton;
     private Button sureButton;
+    private Button goLoginButton;
     private String accountName;
     private long accountId = -1;
     private File currentPhotoFile;
@@ -79,13 +81,14 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
         photoButton = (Button) findViewById(R.id.photo_Button);
         sureButton = (Button) findViewById(R.id.sure_Button);
         smallImageView = (ImageView) findViewById(R.id.small_ImageView);
+        goLoginButton = (Button) findViewById(R.id.go_login_Button);
     }
 
     private long getAccountId(String name) {
         long accountId = -1;
-        Cursor cursor = getContentResolver().query(Uri.parse(AccountData.CONTENT_URI_NAME + name),
+        Cursor cursor = getContentResolver().query(Uri.withAppendedPath(AccountData.CONTENT_URI, name),
                 new String[] {AccountData._ID}, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
+        if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             accountId = cursor.getLong(0);
         }
         Util.safeCloseCursor(cursor);
@@ -94,22 +97,32 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
 
     private void initView() {
         accountName = PreferenceManager.getDefaultSharedPreferences(this).getString(ACCOUNT_NAME, "");
-        if (!TextUtils.isEmpty(accountName)) {
-            accountId = getAccountId(accountName);
-            if (accountId > 0) {
-                AnalysisHolderActivity.startActivity(this,accountId);
-                finish();
-                return;
-            }
+        boolean isLogin = false;
+        if (getIntent() != null) {
+            isLogin = getIntent().getBooleanExtra(EXTRA_IS_LOGIN, false);
         }
-        if (accountId <= 0) {
-            registerLinearLayout.setVisibility(View.VISIBLE);
-            loginLinearLayout.setVisibility(View.GONE);
+        if (isLogin) {
+            registerLinearLayout.setVisibility(View.GONE);
+            loginLinearLayout.setVisibility(View.VISIBLE);
+        } else {
+            if (!TextUtils.isEmpty(accountName)) {
+                accountId = getAccountId(accountName);
+                if (accountId > 0) {
+                    AnalysisHolderActivity.startActivity(this,accountId);
+                    finish();
+                    return;
+                }
+            }
+            if (accountId <= 0) {
+                registerLinearLayout.setVisibility(View.VISIBLE);
+                loginLinearLayout.setVisibility(View.GONE);
+            }
         }
         loginButton.setOnClickListener(this);
         registerTextView.setOnClickListener(this);
         photoButton.setOnClickListener(this);
         sureButton.setOnClickListener(this);
+        goLoginButton.setOnClickListener(this);
     }
 
     public static void startActivity(Activity activity) {
@@ -117,12 +130,20 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
         activity.startActivity(intent);
     }
 
+    public static void startActivity(Activity activity, boolean isLogin) {
+        Intent intent = new Intent(activity, LoginOrRegisterActivity.class);
+        intent.putExtra(EXTRA_IS_LOGIN, isLogin);
+        activity.startActivity(intent);
+    }
+
     @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.login_Button) {
+            accountName = loginEditText.getText().toString();
             accountId = getAccountId(accountName);
             if (accountId > 0) {
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putString(ACCOUNT_NAME, accountName).commit();
                 AnalysisHolderActivity.startActivity(this,accountId);
                 finish();
             } else {
@@ -154,6 +175,9 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
             PreferenceManager.getDefaultSharedPreferences(this).edit().putString(ACCOUNT_NAME, accountName).commit();
             AnalysisHolderActivity.startActivity(this, accountId);
             finish();
+        } else if (id == R.id.go_login_Button) {
+            registerLinearLayout.setVisibility(View.GONE);
+            loginLinearLayout.setVisibility(View.VISIBLE);
         }
     }
     @Override

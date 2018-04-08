@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -44,6 +45,7 @@ public class AnalysisHolderActivity extends AppCompatActivity {
     private ImageView mySmallImagView;
     private TextView nameTextView;
     private TextView dateTextView;
+    private TextView changeAccountTextView;
     private File currentPhotoFile;
     public static String TempCropFile = Util.TEMP_IMG + "tmp.jpg";
     private long accountId;
@@ -70,6 +72,7 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         mySmallImagView = (ImageView)findViewById(R.id.small_img_ImageView);
         nameTextView = (TextView) findViewById(R.id.status_detail_TextView);
         dateTextView = (TextView)findViewById(R.id.photo_date_TextView);
+        changeAccountTextView = (TextView)findViewById(R.id.change_account_TextView);
 
     }
 
@@ -125,6 +128,14 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         nameTextView.setText(cursor.getString(cursor.getColumnIndex(AccountData.ACCOUNT_NAME)));
         dateTextView.setText(getString(R.string.photo_data,
                 Util.parseDateString(cursor.getLong(cursor.getColumnIndex(AccountData.CREATE_DATE)))));
+        changeAccountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PreferenceManager.getDefaultSharedPreferences(AnalysisHolderActivity.this).edit().putString(LoginOrRegisterActivity.ACCOUNT_NAME, "").commit();
+                LoginOrRegisterActivity.startActivity(AnalysisHolderActivity.this, true);
+                finish();
+            }
+        });
     }
 
     private class AnalysisDataCallback implements LoaderManager.LoaderCallbacks<Cursor> {
