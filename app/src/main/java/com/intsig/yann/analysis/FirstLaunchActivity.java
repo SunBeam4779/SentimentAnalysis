@@ -34,7 +34,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    LoginOrRegisterActivity.startActivity(FirstLaunchActivity.this);
+                    WelcomeActivity.startActivity(FirstLaunchActivity.this);
                     finish();
                 }
             }, 2000);
@@ -51,7 +51,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
                             Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
                             finish();
                         } else {
-                             LoginOrRegisterActivity.startActivity(FirstLaunchActivity.this);
+                             WelcomeActivity.startActivity(FirstLaunchActivity.this);
                              finish();
                          }
                     }

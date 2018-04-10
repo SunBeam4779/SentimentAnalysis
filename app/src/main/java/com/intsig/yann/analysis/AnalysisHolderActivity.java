@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
@@ -135,7 +134,6 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         changeAccountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PreferenceManager.getDefaultSharedPreferences(AnalysisHolderActivity.this).edit().putString(LoginOrRegisterActivity.ACCOUNT_NAME, "").commit();
                 LoginOrRegisterActivity.startActivity(AnalysisHolderActivity.this, true);
                 finish();
             }

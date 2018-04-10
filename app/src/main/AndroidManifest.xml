@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.intsig.yann.analysis">
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/logo"
@@ -11,23 +13,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <provider
-            android:name="com.intsig.yann.analysis.AnalysisDataProvider"
+            android:name=".AnalysisDataProvider"
             android:authorities="com.intsig.yann.analysis.provider"
-            android:multiprocess="false"
-            android:exported="false">
-        </provider>
-
+            android:exported="false"
+            android:multiprocess="false" />
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.intsig.yann.sentimentanalysis.fileprovider.provider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/update_file" />
         </provider>
 
-        <activity android:name="com.intsig.yann.analysis.FirstLaunchActivity"
+        <activity
+            android:name=".FirstLaunchActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,20 +36,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.intsig.yann.analysis.AnalysisHolderActivity"
+        <activity
+            android:name=".AnalysisHolderActivity"
+            android:label="结果列表"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:label="结果列表">
-        </activity>
-        <activity android:name="com.intsig.yann.analysis.LoginOrRegisterActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".LoginOrRegisterActivity"
+            android:label="登录"
             android:launchMode="singleTask"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="登录">
-        </activity>
-        <activity android:name="com.intsig.yann.analysis.AnalysisDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            android:label="详情">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+            android:name=".AnalysisDetailActivity"
+            android:label="详情"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity android:name=".WelcomeActivity" />
+        <activity android:name=".PhotoBaseActivity"></activity>
     </application>
 
 </manifest>
