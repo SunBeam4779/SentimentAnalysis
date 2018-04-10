@@ -50,8 +50,12 @@
             android:name=".AnalysisDetailActivity"
             android:label="详情"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity android:name=".WelcomeActivity" />
-        <activity android:name=".PhotoBaseActivity"></activity>
+        <activity android:name=".WelcomeActivity"
+            android:label="选择账户"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"  />
+        <activity android:name=".PhotoBaseActivity"
+            android:label="拍摄基底"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
     </application>
 
 </manifest>
