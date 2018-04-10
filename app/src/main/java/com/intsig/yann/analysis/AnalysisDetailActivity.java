@@ -49,8 +49,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
         if(!isAnalysis) {
             Cursor cursor = getContentResolver().query(ContentUris.withAppendedId(AnalysisData.CONTENT_URI_ID, dataId), null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
-                String bigImage = cursor.getString(cursor.getColumnIndex(AnalysisData.SMALL_IMG));
-                long date = cursor.getLong(cursor.getColumnIndex(AnalysisData.CREATE_DATE));
+                String bigImage = cursor.getString(cursor.getColumnIndex(AnalysisData.BIG_IMG));
                 String status = cursor.getString(cursor.getColumnIndex(AnalysisData.FATIGUE));
                 photoImageView.setImageBitmap(Util.loadBitmap(bigImage));
                 detailTextView.setText(status);
