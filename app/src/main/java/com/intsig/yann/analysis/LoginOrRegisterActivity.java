@@ -248,10 +248,14 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
             myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
             currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
+            Uri uri = null;
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, currentPhotoFile);
+            } else {
+                uri = Uri.fromFile(currentPhotoFile);
             }
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentPhotoFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, REQUEST_CAMERA);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
@@ -259,6 +263,12 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
     }
 
     private void doCropPhoto(File oriImg, int requestCode) {
+        Uri photoURI = null;
+        try {
+            photoURI = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, oriImg);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         try {
             File cfile = new File(AnalysisHolderActivity.TempCropFile);
             if (cfile.exists()) {
@@ -266,13 +276,20 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
             }
             // Launch gallery to crop the photo
             Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setDataAndType(Uri.fromFile(oriImg), "image/*");
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.M) {//7.0以上
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(photoURI, "image/*");
+            } else {
+                intent.setDataAndType(Uri.fromFile(oriImg), "image/*");
+            }
             intent.putExtra("crop", "true");
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);
             intent.putExtra("scale", true);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB
-                    || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (android.os.Build.VERSION.SDK_INT  > android.os.Build.VERSION_CODES.M) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES,
+                        new File(AnalysisHolderActivity.TempCropFile)));
+            } else {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(AnalysisHolderActivity.TempCropFile)));
             }
             int outputX = 800;

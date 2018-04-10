@@ -247,10 +247,14 @@ public class AnalysisHolderActivity extends AppCompatActivity {
             PHOTO_DIR.mkdirs();
             currentPhotoFile = new File(PHOTO_DIR, Util.getDateAsName() + ".jpg");
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
+            Uri uri = null;
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, currentPhotoFile);
+            } else {
+                uri = Uri.fromFile(currentPhotoFile);
             }
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(currentPhotoFile));
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             startActivityForResult(intent, REQUEST_CAMERA);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
@@ -282,8 +286,10 @@ public class AnalysisHolderActivity extends AppCompatActivity {
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);
             intent.putExtra("scale", true);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB
-                    || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.M) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES,
+                        new File(TempCropFile)));
+            } else {
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TempCropFile)));
             }
             int outputX = 800;
