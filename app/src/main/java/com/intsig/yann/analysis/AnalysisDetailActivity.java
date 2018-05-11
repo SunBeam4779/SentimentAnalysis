@@ -6,8 +6,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -96,18 +96,8 @@ public class AnalysisDetailActivity extends AppCompatActivity {
                 }
             });
             isAnalysis = true;
-            showProgress();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    dismissProgress();
-                    photoImageView.setImageBitmap(Util.loadBitmap(Util.ORIGINAL_IMG + "/"+ imageName));
-                    detailResult = "疲劳度为67，非常疲劳，建议应该注重休息，平常多喝水，调整睡眠，日常多进行运动，这样有助于改善身体机能";
-                    detailTextView.setText(detailResult);
-                    detailDate = System.currentTimeMillis();
-
-                }
-            }, 3000);
+            photoImageView.setImageBitmap(Util.loadBitmap(Util.ORIGINAL_IMG + "/"+ imageName));
+            detailDate = System.currentTimeMillis();
         } else {
             saveButton.setVisibility(View.GONE);
             isAnalysis = false;
@@ -120,8 +110,38 @@ public class AnalysisDetailActivity extends AppCompatActivity {
                 new String[]{accountId + ""}, null);
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             myPhotoImageView.setImageBitmap(Util.loadBitmap(cursor.getString(cursor.getColumnIndex(AccountData.BIG_IMG))));
+            if (isAnalysis) {
+                final Bitmap origin = Util.loadBitmap(cursor.getString(cursor.getColumnIndex(AccountData.SMALL_IMG)));
+                final Bitmap test = Util.loadBitmap(Util.THUMB_IMG + "/"+ imageName);
+                showProgress();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        double[] originResult = getFeatureCal(origin);
+                        double[] testResult = getFeatureCal(test);
+                        final double result = FeatureNdkManager.featuresResult(originResult, testResult);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dismissProgress();
+                                detailResult = getString(R.string.feature_result, result + "");
+                                detailTextView.setText(detailResult);
+                            }
+                        });
+                    }
+                }).start();
+            }
         }
         Util.safeCloseCursor(cursor);
+    }
+
+    private double[] getFeatureCal(Bitmap bitmap) {
+        int w = bitmap.getWidth();
+        int h = bitmap.getHeight();
+        int[] pixels = new int[w*h];
+        bitmap.getPixels(pixels, 0, w, 0, 0, w, h);
+        double[] resultDouble = FeatureNdkManager.featuresCal(pixels, w, h);
+        return resultDouble;
     }
 
     private void showProgress() {

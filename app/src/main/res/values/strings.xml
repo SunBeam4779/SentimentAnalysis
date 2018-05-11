@@ -26,4 +26,5 @@
     <string name="base_photo_save_tips">请重新登陆并开始拍摄进行实验</string>
     <string name="has_account">已有账号，请重新登陆</string>
     <string name="no_name">请输入用户名</string>
+    <string name="feature_result">您当前的疲劳值为%s（疲劳值范围为0-100，0为不疲劳,100为疲劳）</string>
 </resources>
