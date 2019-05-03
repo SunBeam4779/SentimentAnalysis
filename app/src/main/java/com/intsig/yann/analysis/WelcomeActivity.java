@@ -16,8 +16,8 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        newAccountTextView = (TextView) findViewById(R.id.new_account_TextView);
-        oldAccountTextView = (TextView) findViewById(R.id.old_account_TextView);
+        newAccountTextView = findViewById(R.id.new_account_TextView);
+        oldAccountTextView = findViewById(R.id.old_account_TextView);
         newAccountTextView.setOnClickListener(this);
         oldAccountTextView.setOnClickListener(this);
 
