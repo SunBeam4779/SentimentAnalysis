@@ -1,40 +1,48 @@
 package com.intsig.yann.analysis;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
-import android.support.v4.content.PermissionChecker;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.content.PermissionChecker;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 
-public class AnalysisHolderActivity extends AppCompatActivity {
+public class AnalysisHolderActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String ACCOUNT_ID = "ACCOUNT_ID";
     private static final int LOADER_ID_DATA_LOADER = 101;
     private static final int REQUEST_PERMISSION = 102;
     private static final int REQUEST_CAMERA = 103;
     private static final int REQUEST_CROP = 104;
+    private static final int REQUEST_ALBUM = 105;
+    private static final int REQUEST_PERMISSION2 = 106;
+
 
     private RelativeLayout emptyStatusRelativeLayout;
     private RecyclerView historyRecyclerView;
@@ -48,7 +56,8 @@ public class AnalysisHolderActivity extends AppCompatActivity {
     private File currentPhotoFile;
     public static String TempCropFile = Util.TEMP_IMG + "tmp.jpg";
     private long accountId;
-
+    private ImageView photoSelectView;
+    private String myBigImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,26 +81,40 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         nameTextView = (TextView) findViewById(R.id.status_detail_TextView);
         dateTextView = (TextView)findViewById(R.id.photo_date_TextView);
         changeAccountTextView = (TextView)findViewById(R.id.change_account_TextView);
-
+        photoSelectView = (ImageView) findViewById(R.id.photo_select);
     }
 
     private void initView() {
         analysisDataAdapter = new AnalysisDataAdapter(getLayoutInflater(), null);
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         historyRecyclerView.setAdapter(analysisDataAdapter);
-        photoImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                        PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION);
-                } else {
-                    takePhoto();
-                }
+
+        photoImageView.setOnClickListener(this);
+        photoSelectView.setOnClickListener(this);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.photo_image) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.CAMERA) != PermissionChecker.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
+            } else {
+                takePhoto();
             }
-        });
+        } else if (id == R.id.photo_select) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    ContextCompat.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(AnalysisHolderActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION2);
+            } else {
+                openAlbum();
+            }
+        }
         getSdcardPermission();
     }
+
 
     public long getAccountId() {
         return accountId;
@@ -99,7 +122,7 @@ public class AnalysisHolderActivity extends AppCompatActivity {
 
     private void getSdcardPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
         }
     }
@@ -183,6 +206,16 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 doCropPhoto(currentPhotoFile, REQUEST_CROP);
+            } else if (requestCode == REQUEST_ALBUM) {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        //4.4及以上系统使用这个方法处理图片
+                        handleImageOnKitKat(data);
+                    } else {
+                        //4.4以下系统使用这个方法处理图片
+                        handleImageBeforeKitKat(data);
+                    }
+                }
             } else if (requestCode == REQUEST_CROP) {
                 String cropFilePath = null;
                 if (new File(TempCropFile).exists()) {
@@ -219,11 +252,11 @@ public class AnalysisHolderActivity extends AppCompatActivity {
                 if (grantResults.length > 0) {
                     for(int i = 0; i < permissions.length ; i++){
                         if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_GRANTED){
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PermissionChecker.PERMISSION_GRANTED) {
                             takePhoto();
                             return;
                         } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {
                             Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
                             finish();
                         }
@@ -259,6 +292,19 @@ public class AnalysisHolderActivity extends AppCompatActivity {
         }
     }
 
+    private void openAlbum() {
+        File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
+        PHOTO_DIR.mkdirs();
+        String time = Util.getDateAsName();
+        myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
+        currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
+
+
+        Intent intent = new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_ALBUM);
+    }
+
     private void doCropPhoto(File oriImg, int requestCode) {
         Uri photoURI = null;
         try {
@@ -281,24 +327,71 @@ public class AnalysisHolderActivity extends AppCompatActivity {
                 intent.setDataAndType(Uri.fromFile(oriImg), "image/*");
             }
             intent.putExtra("crop", "true");
-            intent.putExtra("aspectX", 1);
+            intent.putExtra("aspectX", 1);//裁剪框比例
             intent.putExtra("aspectY", 1);
             intent.putExtra("scale", true);
             if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB
                     || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TempCropFile)));
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(TempCropFile))); //uri 用来存放bitmap
             }
-            int outputX = 800;
-            int outputY = 800;
+            int outputX = 1840;
+            int outputY = 3264;
             intent.putExtra("outputX", outputX);
             intent.putExtra("outputY", outputY);
             intent.putExtra("return-data", false);// 某些图片剪切出来的bitmap 会很大，导致 intent transaction
             // faield。
+            intent.putExtra("noFaceDetection", true);
             startActivityForResult(intent, requestCode);
         } catch (Exception e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
     }
+
+    @TargetApi(19)
+    private void handleImageOnKitKat(Intent data) {
+        String imagePath = null;
+        Uri uri = data.getData();
+        if (DocumentsContract.isDocumentUri(this, uri)) {
+            String docId = DocumentsContract.getDocumentId(uri);
+            if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
+                String id = docId.split(".")[1];//解析出数字格式的id
+                String selection = MediaStore.Images.Media._ID + "=" + id;
+                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
+                imagePath = getImagePath(contentUri, null);
+            }
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+            //如果是content类型的Uri，则使用普通方式处理
+            imagePath = getImagePath(uri, null);
+        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
+            //如果是file类型的Uri，直接获取图片路径即可
+            imagePath = uri.getPath();
+        }
+        File currentPhotoFile = new File(imagePath);
+        Util.copyFile(imagePath, myBigImage);
+        doCropPhoto(currentPhotoFile, REQUEST_CROP);
+    }
+
+    private void handleImageBeforeKitKat(Intent data) {
+        Uri uri = data.getData();
+        String imagePath = getImagePath(uri, null);
+        doCropPhoto(currentPhotoFile, REQUEST_CROP);
+    }
+
+    private String getImagePath(Uri uri, String selection) {
+        String path = null;
+        //通过Uri和selection来获取真实的图片路径
+        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+
 
     public static void startActivity(Activity activity, long acountId) {
         Intent intent = new Intent(activity, AnalysisHolderActivity.class);

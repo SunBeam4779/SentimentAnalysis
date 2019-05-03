@@ -2,15 +2,10 @@ package com.intsig.yann.analysis;
 
 import android.app.Activity;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by yann_qiu on 2018/3/25.

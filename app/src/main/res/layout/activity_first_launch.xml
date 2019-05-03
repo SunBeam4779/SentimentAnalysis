@@ -6,21 +6,21 @@
     android:background="@mipmap/start">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_25"
-        android:text="@string/launch_title"
-        android:gravity="center"
-        android:layout_centerInParent="true"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="@dimen/text_size_25"
+		    android:text="人脸图像疲劳状态检测软件"
+		    android:gravity="center"
+		    android:layout_centerInParent="true"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_16"
-        android:text="@string/author"
-        android:gravity="center"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textSize="@dimen/text_size_16"
+		    android:text="西安交通大学"
+		    android:gravity="center"
+		    android:layout_centerHorizontal="true"
+		    android:layout_alignParentBottom="true"
+		    android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
 </RelativeLayout>

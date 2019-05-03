@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'simple-android-image-crop'
+
+    publishedGroupId = 'tech.gaolinfeng'
+    libraryName = 'SimpleAndroidImageCrop'
+    artifact = 'SimpleAndroidImageCrop'
+
+    libraryDescription = 'A simple android lib that supports image cropping functionality, in less than 1000 lines, easy to use or modify.'
+
+    siteUrl = 'https://github.com/cuc-glf/ImageCrop'
+    gitUrl = 'https://github.com/cuc-glf/ImageCrop.git'
+
+    libraryVersion = '0.1.2'
+
+    developerId = 'gaolf'
+    developerName = 'gaolinfeng'
+    developerEmail = 'wcc113322@126.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            aaptOptions.cruncherEnabled = false
+            aaptOptions.useNewCruncher = false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+apply from: './install.gradle' //https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle
+apply from: './bintray.gradle' //https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle

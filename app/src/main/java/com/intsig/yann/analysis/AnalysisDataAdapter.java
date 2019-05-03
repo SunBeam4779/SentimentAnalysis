@@ -1,9 +1,9 @@
 package com.intsig.yann.analysis;
 
 import android.database.Cursor;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by yann_qiu on 2018/3/25.

@@ -10,11 +10,11 @@
     android:background="@color/color_light"
     android:orientation="vertical">
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/base_photo_tips"
-        android:textSize="@dimen/text_size_16"
-        android:layout_marginTop="8dp"/>
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="请拍摄基底照片，并截取下眼睑部位作为感兴趣区域"
+		    android:textSize="@dimen/text_size_16"
+		    android:layout_marginTop="8dp"/>
 
     <ImageView
         android:id="@+id/photo_ImageView"
@@ -31,17 +31,29 @@
         android:layout_marginTop="8dp"
         android:src="@mipmap/emptystatus_smile"/>
     <Button
-        android:id="@+id/photo_Button"
-        android:layout_width="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_height="40dp"
-        android:text="@string/photo"
-        android:textColor="@color/color_fafafa"
-        android:textSize="@dimen/text_size_16"
-        android:background="@color/color_1da9ff"
-        android:gravity="center"/>
+		    android:id="@+id/photo_Button"
+		    android:layout_width="match_parent"
+		    android:layout_marginTop="8dp"
+		    android:layout_marginLeft="30dp"
+		    android:layout_marginRight="30dp"
+		    android:layout_height="40dp"
+		    android:text="@string/photo"
+		    android:textColor="@color/color_fafafa"
+		    android:textSize="@dimen/text_size_16"
+		    android:background="@color/color_1da9ff"
+		    android:gravity="center"/>
+	<Button
+			android:id="@+id/select_Button"
+			android:layout_width="match_parent"
+			android:layout_marginTop="8dp"
+			android:layout_marginLeft="30dp"
+			android:layout_marginRight="30dp"
+			android:layout_height="40dp"
+			android:text="选择照片"
+			android:textColor="@color/color_fafafa"
+			android:textSize="@dimen/text_size_16"
+			android:background="@color/color_1da9ff"
+			android:gravity="center"/>
     <Button
         android:id="@+id/sure_Button"
         android:layout_width="match_parent"
