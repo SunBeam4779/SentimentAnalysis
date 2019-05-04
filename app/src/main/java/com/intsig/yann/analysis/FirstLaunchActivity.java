@@ -1,7 +1,6 @@
 package com.intsig.yann.analysis;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,8 +26,8 @@ public class FirstLaunchActivity extends AppCompatActivity {
     }
 
     private void getSdcardPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                PermissionChecker.checkSelfPermission(FirstLaunchActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && // SDK version is higher than the running SDK
+                PermissionChecker.checkSelfPermission(FirstLaunchActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
             requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
         } else {
             new Handler().postDelayed(new Runnable() {
@@ -47,7 +46,7 @@ public class FirstLaunchActivity extends AppCompatActivity {
                 if (grantResults.length > 0) {
                     for(int i = 0; i < permissions.length ; i++){
                          if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                                 PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {
                             Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
                             finish();
                         } else {
