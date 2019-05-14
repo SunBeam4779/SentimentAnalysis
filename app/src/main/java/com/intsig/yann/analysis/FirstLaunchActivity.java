@@ -26,9 +26,9 @@ public class FirstLaunchActivity extends AppCompatActivity {
     }
 
     private void getSdcardPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && // SDK version is higher than the running SDK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && // SDK version is the same as or higher than the running SDK
                 PermissionChecker.checkSelfPermission(FirstLaunchActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);//request permission
         } else {
             new Handler().postDelayed(new Runnable() {
                 @Override

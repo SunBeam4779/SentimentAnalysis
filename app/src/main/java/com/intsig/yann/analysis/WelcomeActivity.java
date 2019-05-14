@@ -5,12 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.view.KeyEvent;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener{
     //define two widgets
     private TextView newAccountTextView;
     private TextView oldAccountTextView;
+
+    //the time point of the first back-button pressing
+    private long lastBackTime = 0;
+    //the time point of the current back-button pressing
+    private long currentBackTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +45,25 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         int id = v.getId();
         if (id == R.id.new_account_TextView) {
             LoginOrRegisterActivity.startActivity(this, false);
-            finish();
+            //finish(); // delete this "finish()", then you can return to the welcome activity from the login activity.
         } else if (id == R.id.old_account_TextView) {
             LoginOrRegisterActivity.startActivity(this, true);
-            finish();
+            //finish(); // the same as the upper.
         }
+    }
+    //apply the function of pressing back-button to exit the app.
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if (keyCode == KeyEvent.KEYCODE_BACK){
+            currentBackTime = System.currentTimeMillis();
+            if(currentBackTime - lastBackTime > 2*1000){
+                Toast.makeText(this,"再次点击以退出", Toast.LENGTH_SHORT).show();
+                lastBackTime = currentBackTime;
+            }else{
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -53,17 +53,17 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
             if (isLogin) {
                 if (accountId > 0) {
                     AnalysisHolderActivity.startActivity(this,accountId);
-                    finish();
+                    this.finish();
                 } else {
                     Toast.makeText(this, R.string.error_account, Toast.LENGTH_LONG).show();
                 }
             } else {
                 if (accountId > 0) {
                     Toast.makeText(this, R.string.has_account, Toast.LENGTH_LONG).show();
-                    finish();
+                    this.finish();
                 } else {
                     PhotoBaseActivity.startActivity(LoginOrRegisterActivity.this, accountName);
-                    finish();
+                    this.finish();
                 }
             }
         }
@@ -77,7 +77,7 @@ public class LoginOrRegisterActivity extends AppCompatActivity implements View.O
     private long getAccountId(String name) {
         long accountId = -1;
         Cursor cursor = getContentResolver().query(Uri.withAppendedPath(AccountData.CONTENT_URI, name),
-                new String[] {AccountData._ID}, null, null, null);
+                new String[] {AccountData._ID}, null, null, null);// AccountData._ID is the row ID in the returned column.
         if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
             accountId = cursor.getLong(0);
         }
