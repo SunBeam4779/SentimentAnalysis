@@ -74,14 +74,14 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
     }
 
     private void initFromXml() {
-        emptyStatusRelativeLayout = (RelativeLayout) findViewById(R.id.empty_status_RelativeLayout);
-        historyRecyclerView = (RecyclerView) findViewById(R.id.history_RecyclerView);
-        photoImageView = (ImageView) findViewById(R.id.photo_image);
-        mySmallImagView = (ImageView)findViewById(R.id.small_img_ImageView);
-        nameTextView = (TextView) findViewById(R.id.status_detail_TextView);
-        dateTextView = (TextView)findViewById(R.id.photo_date_TextView);
-        changeAccountTextView = (TextView)findViewById(R.id.change_account_TextView);
-        photoSelectView = (ImageView) findViewById(R.id.photo_select);
+        emptyStatusRelativeLayout = findViewById(R.id.empty_status_RelativeLayout);
+        historyRecyclerView = findViewById(R.id.history_RecyclerView);
+        photoImageView = findViewById(R.id.photo_image);
+        mySmallImagView = findViewById(R.id.small_img_ImageView);
+        nameTextView = findViewById(R.id.status_detail_TextView);
+        dateTextView = findViewById(R.id.photo_date_TextView);
+        changeAccountTextView = findViewById(R.id.change_account_TextView);
+        photoSelectView = findViewById(R.id.photo_select);
     }
 
     private void initView() {
@@ -146,7 +146,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         Cursor cursor = getContentResolver().query(AccountData.CONTENT_URI, null, AccountData._ID + "=?",
                 new String[]{accountId + ""}, null);
         if (cursor == null || !cursor.moveToFirst()) {
-            Toast.makeText(this, R.string.error_account, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.error_account, Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -157,8 +157,11 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         changeAccountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginOrRegisterActivity.startActivity(AnalysisHolderActivity.this, true);
-                finish();
+                //LoginOrRegisterActivity.startActivity(AnalysisHolderActivity.this, true);
+                Intent intent1 = new Intent(AnalysisHolderActivity.this, LoginOrRegisterActivity.class);
+                intent1.putExtra(LoginOrRegisterActivity.EXTRA_IS_LOGIN, true);
+                startActivity(intent1);
+                //finish();
             }
         });
     }
