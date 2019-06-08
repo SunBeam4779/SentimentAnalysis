@@ -96,6 +96,8 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onClick(View v) {
+        //DrawCircle mDraw = new DrawCircle(this, null);
+        //Intent intent = new Intent(this, Camera_test.class);
         int id = v.getId();
         if (id == R.id.photo_image) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -103,6 +105,10 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                 requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
             } else {
                 takePhoto();
+                //mDraw.setVisibility(View.VISIBLE);
+                //mDraw.drawLine();
+                //startActivity(intent);
+
             }
         } else if (id == R.id.photo_select) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -161,7 +167,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                 Intent intent1 = new Intent(AnalysisHolderActivity.this, LoginOrRegisterActivity.class);
                 intent1.putExtra(LoginOrRegisterActivity.EXTRA_IS_LOGIN, true);
                 startActivity(intent1);
-                //finish();
+                //finish();???????
             }
         });
     }
@@ -276,6 +282,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
      * Launches Camera to take a picture and store it in a file.
      */
     private void takePhoto() {
+
         try {
             File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
             PHOTO_DIR.mkdirs();

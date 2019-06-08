@@ -56,11 +56,11 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initFromXml() {
-        photoImageView = (ImageView) findViewById(R.id.photo_ImageView);
-        photoButton = (Button) findViewById(R.id.photo_Button);
-        sureButton = (Button) findViewById(R.id.sure_Button);
-        smallImageView = (ImageView) findViewById(R.id.small_ImageView);
-        selectButton = (Button) findViewById(R.id.select_Button);
+        photoImageView = findViewById(R.id.photo_ImageView);
+        photoButton = findViewById(R.id.photo_Button);
+        sureButton = findViewById(R.id.sure_Button);
+        smallImageView = findViewById(R.id.small_ImageView);
+        selectButton = findViewById(R.id.select_Button);
     }
 
     private void initView() {
@@ -74,13 +74,17 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        //Intent intent = new Intent(this, helloworld.class);
         int id = view.getId();
         if (id == R.id.photo_Button) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    PermissionChecker.checkSelfPermission(PhotoBaseActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    PermissionChecker.checkSelfPermission(PhotoBaseActivity.this, Manifest.permission.CAMERA) != PermissionChecker.PERMISSION_GRANTED) {//
                 requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION);
             } else {
-                takePhoto();
+                //startActivity(intent);
+                //takePhoto();
+                takePicture();
+
             }
         } else if (id == R.id.select_Button) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -155,11 +159,11 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
                 if (grantResults.length > 0) {
                     for(int i = 0; i < permissions.length ; i++){
                         if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PackageManager.PERMISSION_GRANTED){
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PermissionChecker.PERMISSION_GRANTED) {//
                             takePhoto();
                             return;
                         } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {//
                             Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
                             finish();
                         }
@@ -176,6 +180,8 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
      * Launches Camera to take a picture and store it in a file.
      */
     private void takePhoto() {
+
+        //startActivityForResult(intent, REQUEST_CAMERA);
         try {
             File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
             PHOTO_DIR.mkdirs();
@@ -183,6 +189,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
             myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
             currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE, null);
+            //Intent intent1 = new Intent(this, Camera_test.class);
             Uri uri = null;
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -195,6 +202,24 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void takePicture() {
+        File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
+        PHOTO_DIR.mkdirs();
+        String time = Util.getDateAsName();
+        myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
+        currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
+        Uri uri = null;
+        Intent intent = new Intent(this, Camera_test.class);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, currentPhotoFile);
+        } else {
+            uri = Uri.fromFile(currentPhotoFile);
+        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     private void openAlbum() {

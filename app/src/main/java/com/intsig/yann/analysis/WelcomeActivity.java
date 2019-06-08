@@ -3,9 +3,9 @@ package com.intsig.yann.analysis;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
-import android.view.KeyEvent;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,11 +44,17 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.new_account_TextView) {
-            LoginOrRegisterActivity.startActivity(this, false);
+            //LoginOrRegisterActivity.startActivity(this, false);
             //finish(); // delete this "finish()", then you can return to the welcome activity from the login activity.
+            Intent intent1 = new Intent(this, LoginOrRegisterActivity.class);
+            intent1.putExtra(LoginOrRegisterActivity.EXTRA_IS_LOGIN, false);
+            startActivity(intent1);
         } else if (id == R.id.old_account_TextView) {
-            LoginOrRegisterActivity.startActivity(this, true);
+            //LoginOrRegisterActivity.startActivity(this, true);
             //finish(); // the same as the upper.
+            Intent intent2 = new Intent(this, LoginOrRegisterActivity.class);
+            intent2.putExtra(LoginOrRegisterActivity.EXTRA_IS_LOGIN, true);
+            startActivity(intent2);
         }
     }
     //apply the function of pressing back-button to exit the app.
