@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,9 +48,10 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
     private int intScreenRotating;
     private Size mPreviewSize;
     private List<Size> mSupportedPreviewSizes;
+    private String URI;
 
     @SuppressLint("SdCardPath")
-    private String strCaptureFilePath = "/SD 卡/camera_snap.jpg";
+    private String strCaptureFilePath = Util.ORIGINAL_IMG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,38 +60,27 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_camera);
 
+        Intent intent = getIntent();
+        URI = intent.getStringExtra("uri");
+
         getCameraInfo();
 
         if (!checkSDCard()) {
             mMakeTextToast(getResources().getText(R.string.need_sdcard_permission).toString(), true);
         }
 
-        //ViewGroup.LayoutParams params = mSurfaceView1.getLayoutParams();//pause here
         DisplayMetrics dm = new DisplayMetrics();// 取得屏幕解析像素
+        Log.d("", dm.toString());
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         DrawOnTop mDraw = new DrawOnTop(this);
         addContentView(mDraw, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-//        int Width = dm.widthPixels;
-//        int Height = dm.heightPixels;
+
         //mCircle = (DrawCircle)findViewById(R.id.mCircle);
         mTextView1 = findViewById(R.id.myTextView1);
-        //mImageView1 = (ImageView) findViewById(R.id.myImageView1);
+
         //以SurfaceView作为相机preview之用
         mSurfaceView1 = findViewById(R.id.mSurfaceView1);
-
-//        ViewGroup.LayoutParams params = mSurfaceView1.getLayoutParams();
-//        params.width = Width;
-//        params.height = Height;
-//        mSurfaceView1.setLayoutParams(params);
-
-//        Thread thread = new Thread(){
-//            @Override
-//            public void run(){
-//                mCircle.setVisibility(View.VISIBLE);
-//                mCircle.drawLine();
-//            }
-//        };
 
         //绑定SurfaceView，取得SurfaceHolder对象
         mSurfaceHolder1 = mSurfaceView1.getHolder();
@@ -107,25 +96,10 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         //mSurfaceHolder1.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         button1 = findViewById(R.id.mybutton1);
-        //button2 = (Button) findViewById(R.id.mybutton2);
-        //button3 = (Button) findViewById(R.id.mybutton3);
-        //打开相机及preview，画框
+
+        //打开相机及preview
 
         initCamera();
-        //mCircle.setVisibility(View.VISIBLE);
-        //mCircle.doDraw();
-        //mCircle.drawLine();
-        //thread.start();
-
-//        button1.setOnClickListener(new Button.OnClickListener(){
-//            @Override
-//            public void onClick(View arg0){
-//                initCamera();
-//            }
-//        });
-
-        //停止相机和preview
-
 
         //拍照
         button1.setOnClickListener(new Button.OnClickListener() {
@@ -133,7 +107,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
             public void onClick(View arg0) {
                 if (checkSDCard()) {
                     takePicture();
-                    exitActivity(2);
+                    //exitActivity(2);
                 } else {
                     mTextView1.setText(getResources().getText(R.string.need_sdcard_permission).toString());
                 }
@@ -159,6 +133,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
             paint.setColor(Color.RED);
             //canvas.drawText("调整手机，将眼睛放入圆圈", 300, 500, p);
             canvas.drawCircle(300, 700, 100, paint);
+            canvas.drawCircle(780, 700, 100, paint);
             super.onDraw(canvas);
         }
     }
@@ -199,10 +174,13 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
 
             //取得相机支持的像素
             mSupportedPreviewSizes = mCamera1.getParameters().getSupportedPreviewSizes();
+            WindowManager wm = (WindowManager) Camera_test.this.getSystemService(Context.WINDOW_SERVICE);
+            int width = wm.getDefaultDisplay().getWidth();
+            int height = width * 4 / 3;
 
             if (mSupportedPreviewSizes != null) {
                 //指定相机预览的像素分辨率
-                mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, 320, 240);
+                mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
             }
 
             //取得相机的设置参数
@@ -214,9 +192,12 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
 
             //重新设置相机参数
             mCamera1.setParameters(parameters);
+            //setCameraDisplayOrientation(mCamera1);
             try {
                 mCamera1.setPreviewDisplay(mSurfaceHolder1);
+                int degree = setCameraDisplayOrientation(mCamera1);
                 mCamera1.setDisplayOrientation(90);
+                //setCameraDisplayOrientation(mCamera1);
                 //立即执行preview
                 mCamera1.startPreview();
                 bIfPreview = true;
@@ -250,9 +231,8 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
     }
 
     //设置相机显示方向
-    private void setCameraDisplayOrientation(Camera camera) {
+    private int setCameraDisplayOrientation(Camera camera) {
         intScreenRotating = Camera_test.this.getWindowManager().getDefaultDisplay().getRotation();
-        //System.out.println("HELLO!!!!!"+intScreenRotating);
 
         int degrees = 0;
         int result;
@@ -273,6 +253,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         }
 
         cameraInfo = new CameraInfo();
+        int orientation = 0;
         for (int i = 0; i < numberOfCameras; i++) {
             //若是前置
             if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
@@ -282,12 +263,15 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
                 //后置
                 result = (cameraInfo.orientation - degrees + 360) % 360;
             }
-            camera.setDisplayOrientation(result);
+            //camera.setDisplayOrientation(result);
+            orientation = result;
         }
+        return orientation;
     }
 
     //取得最佳分辨率
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
+
         //允许缩放的宽高比
         final double ASPECT_TOLERANCE = 0.1;
         //以宽为主，计算缩放比
@@ -339,32 +323,34 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             //TODO Handle RAW image data
-
             //传入的第一个参数即为相片的byte
             Bitmap bm = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Log.d("", "hello");
 
             //创建新文件
             File myCaptureFile = new File(strCaptureFilePath);
+            if (!myCaptureFile.exists()) {
+                myCaptureFile.mkdir();
+            }
+
+            File Picturefile = new File(URI);
+            if (Picturefile.exists()) {
+                Picturefile.delete();
+            }
+
             try {
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
-
-                //采用压缩转档
-                bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
-
-                //调用flush()方法，更新BufferStream
-                bos.flush();
-
-                //结束OutputStream
-                bos.close();
-
-                //将拍照下来且保存完毕的图文件显示
-                mImageView1.setImageBitmap(bm);
-
-                //显示完后，立即重启相机，关闭预览
-                resetCamera();
+                FileOutputStream fos = new FileOutputStream(Picturefile);
+                fos.write(data);
+                fos.close();
 
                 //再次重启相机继续预览
                 initCamera();
+
+                Intent intent = new Intent();
+                intent.putExtra("uri", Picturefile);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
                 Log.e(TAG, e.toString());

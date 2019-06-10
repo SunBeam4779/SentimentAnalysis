@@ -3,7 +3,6 @@ package com.intsig.yann.analysis;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -104,11 +103,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                     PermissionChecker.checkSelfPermission(AnalysisHolderActivity.this, Manifest.permission.CAMERA) != PermissionChecker.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION);
             } else {
-                takePhoto();
-                //mDraw.setVisibility(View.VISIBLE);
-                //mDraw.drawLine();
-                //startActivity(intent);
-
+                takePicture();//takePhoto();
             }
         } else if (id == R.id.photo_select) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -164,7 +159,8 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
             @Override
             public void onClick(View v) {
                 //LoginOrRegisterActivity.startActivity(AnalysisHolderActivity.this, true);
-                Intent intent1 = new Intent(AnalysisHolderActivity.this, LoginOrRegisterActivity.class);
+                Intent intent1;
+                intent1 = new Intent(AnalysisHolderActivity.this, LoginOrRegisterActivity.class);
                 intent1.putExtra(LoginOrRegisterActivity.EXTRA_IS_LOGIN, true);
                 startActivity(intent1);
                 //finish();???????
@@ -262,7 +258,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                     for(int i = 0; i < permissions.length ; i++){
                         if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
                                 PermissionChecker.checkSelfPermission(this, permissions[i]) == PermissionChecker.PERMISSION_GRANTED) {
-                            takePhoto();
+                            takePicture();//takePhoto();
                             return;
                         } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
                                 PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {
@@ -281,7 +277,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
     /**
      * Launches Camera to take a picture and store it in a file.
      */
-    private void takePhoto() {
+    /*private void takePhoto() {
 
         try {
             File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
@@ -300,6 +296,17 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
+    }*/
+    private void takePicture() {
+        Intent intent = new Intent(this, Camera_test.class);
+        String time = Util.getDateAsName();
+        myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
+        intent.putExtra("uri", myBigImage);
+        File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
+        if (PHOTO_DIR.exists()) {
+            currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
+        }
+        startActivityForResult(intent, REQUEST_CAMERA);
     }
 
     private void openAlbum() {

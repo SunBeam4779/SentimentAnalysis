@@ -3,7 +3,6 @@ package com.intsig.yann.analysis;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -74,7 +73,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        //Intent intent = new Intent(this, helloworld.class);
+
         int id = view.getId();
         if (id == R.id.photo_Button) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -82,8 +81,8 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
                 requestPermissions(new String[] {Manifest.permission.CAMERA}, REQUEST_PERMISSION);
             } else {
                 //startActivity(intent);
-                //takePhoto();
                 takePicture();
+
 
             }
         } else if (id == R.id.select_Button) {
@@ -160,7 +159,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
                     for(int i = 0; i < permissions.length ; i++){
                         if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
                                 PermissionChecker.checkSelfPermission(this, permissions[i]) == PermissionChecker.PERMISSION_GRANTED) {//
-                            takePhoto();
+                            takePicture();//takePhoto();
                             return;
                         } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
                                 PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {//
@@ -179,7 +178,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
     /**
      * Launches Camera to take a picture and store it in a file.
      */
-    private void takePhoto() {
+    /*private void takePhoto() {
 
         //startActivityForResult(intent, REQUEST_CAMERA);
         try {
@@ -202,23 +201,17 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     private void takePicture() {
-        File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
-        PHOTO_DIR.mkdirs();
+        Intent intent = new Intent(this, Camera_test.class);
         String time = Util.getDateAsName();
         myBigImage = Util.ORIGINAL_IMG + "/" + time + ".jpg";
-        currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
-        Uri uri = null;
-        Intent intent = new Intent(this, Camera_test.class);
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, currentPhotoFile);
-        } else {
-            uri = Uri.fromFile(currentPhotoFile);
+        intent.putExtra("uri", myBigImage);
+        File PHOTO_DIR = new File(Util.ORIGINAL_IMG);
+        if (PHOTO_DIR.exists()) {
+            currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
         }
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         startActivityForResult(intent, REQUEST_CAMERA);
     }
 
