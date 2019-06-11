@@ -29,12 +29,13 @@ import java.io.File;
 
 public class PhotoBaseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final String ACCOUNT_NAME = "ACCOUNT_NAME";
+    private static final String ACCOUNT_NAME = "ACCOUNT_NAME";
     private static final int REQUEST_PERMISSION = 102;
     private static final int REQUEST_CAMERA = 103;
     private static final int REQUEST_CROP = 104;
     private static final int REQUEST_ALBUM = 105;
     private static final int REQUEST_PERMISSION2 = 106;
+    private static final int REQUEST_TAKE_PICTURE = 107;
 
     private ImageView photoImageView;
     private ImageView smallImageView;
@@ -113,16 +114,16 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
-                doCropPhoto(currentPhotoFile, REQUEST_CROP);
+                doCropPhoto(currentPhotoFile);
+            } else if (requestCode == REQUEST_TAKE_PICTURE) {
+                doCropPicture();
             } else if (requestCode == REQUEST_ALBUM) {
-                if (resultCode == Activity.RESULT_OK) {
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        //4.4及以上系统使用这个方法处理图片
-                        handleImageOnKitKat(data);
-                    } else {
-                        //4.4以下系统使用这个方法处理图片
-                        handleImageBeforeKitKat(data);
-                    }
+                if (Build.VERSION.SDK_INT >= 19) {
+                    //4.4及以上系统使用这个方法处理图片
+                    handleImageOnKitKat(data);
+                } else {
+                    //4.4以下系统使用这个方法处理图片
+                    handleImageBeforeKitKat(data);
                 }
             } else if (requestCode == REQUEST_CROP) {
                 String cropFilePath = null;
@@ -153,25 +154,22 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION:
-                if (grantResults.length > 0) {
-                    for(int i = 0; i < permissions.length ; i++){
-                        if(TextUtils.equals(permissions[i], Manifest.permission.CAMERA) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) == PermissionChecker.PERMISSION_GRANTED) {//
-                            takePicture();//takePhoto();
-                            return;
-                        } else if (TextUtils.equals(permissions[i], Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
-                                PermissionChecker.checkSelfPermission(this, permissions[i]) != PermissionChecker.PERMISSION_GRANTED) {//
-                            Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
-                            finish();
-                        }
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults.length > 0) {
+                for (String permission : permissions) {
+                    if (TextUtils.equals(permission, Manifest.permission.CAMERA) &&
+                            PermissionChecker.checkSelfPermission(this, permission) == PermissionChecker.PERMISSION_GRANTED) {//
+                        takePicture();//takePhoto();
+                        return;
+                    } else if (TextUtils.equals(permission, Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                            PermissionChecker.checkSelfPermission(this, permission) != PermissionChecker.PERMISSION_GRANTED) {//
+                        Toast.makeText(this, R.string.need_sdcard_permission, Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -212,7 +210,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         if (PHOTO_DIR.exists()) {
             currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
         }
-        startActivityForResult(intent, REQUEST_CAMERA);
+        startActivityForResult(intent, REQUEST_TAKE_PICTURE);
     }
 
     private void openAlbum() {
@@ -228,7 +226,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         startActivityForResult(intent, REQUEST_ALBUM);
     }
 
-    private void doCropPhoto(File oriImg, int requestCode) {
+    private void doCropPhoto(File oriImg) {
         Uri photoURI = null;
         try {
             photoURI = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + Util.FILE_PROVIDER_AUTHORITIES, oriImg);
@@ -252,10 +250,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);
             intent.putExtra("scale", true);
-            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB
-                    || android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(AnalysisHolderActivity.TempCropFile)));
-            }
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(AnalysisHolderActivity.TempCropFile)));
             int outputX = 1840;//返回数据的时候的 X 像素大小。
             int outputY = 3264;//返回的时候 Y 的像素大小。
             intent.putExtra("outputX", outputX);
@@ -263,10 +258,17 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
             intent.putExtra("return-data", false);// 某些图片剪切出来的bitmap 会很大，导致 intent transaction
             // faield。
             intent.putExtra("noFaceDetection", true);
-            startActivityForResult(intent, requestCode);
+            startActivityForResult(intent, PhotoBaseActivity.REQUEST_CROP);
         } catch (Exception e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void doCropPicture() {
+        Intent intent = new Intent(this, Crop.class);
+        intent.putExtra("uri", currentPhotoFile.toString());
+
+        startActivityForResult(intent, PhotoBaseActivity.REQUEST_CROP);
     }
 
     @TargetApi(19)
@@ -292,7 +294,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         }
         File currentPhotoFile = new File(imagePath);
         Util.copyFile(imagePath, myBigImage);
-        doCropPhoto(currentPhotoFile, REQUEST_CROP);
+        doCropPhoto(currentPhotoFile);
     }
 
     private void handleImageBeforeKitKat(Intent data) {
@@ -300,7 +302,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         String imagePath = getImagePath(uri, null);
         File currentPhotoFile = new File(imagePath);
         Util.copyFile(imagePath, myBigImage);
-        doCropPhoto(currentPhotoFile, REQUEST_CROP);
+        doCropPhoto(currentPhotoFile);
     }
 
     private String getImagePath(Uri uri, String selection) {
@@ -316,7 +318,7 @@ public class PhotoBaseActivity extends AppCompatActivity implements View.OnClick
         return path;
     }
 
-    public static void startActivity(Activity activity, String accountName) {
+    static void startActivity(Activity activity, String accountName) {
         Intent intent = new Intent(activity, PhotoBaseActivity.class);
         intent.putExtra(ACCOUNT_NAME, accountName);
         activity.startActivity(intent);

@@ -10,6 +10,9 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -26,7 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class Camera_test extends AppCompatActivity implements SurfaceHolder.Callback {
+public class Camera_test extends AppCompatActivity implements SurfaceHolder.Callback, SensorEventListener {
 
     private Camera mCamera1;
     private Button button1;
@@ -52,6 +55,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
 
     @SuppressLint("SdCardPath")
     private String strCaptureFilePath = Util.ORIGINAL_IMG;
+    private int mSensorRotation = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,6 +273,47 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         return orientation;
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        //手机移动一段时间后静止，然后静止一段时间后进行对焦
+        // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            int x = (int) event.values[0];
+            int y = (int) event.values[1];
+            int z = (int) event.values[2];
+
+        }
+
+        mSensorRotation = calculateSensorRotation(event.values[0], event.values[1]);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    private int calculateSensorRotation(float x, float y) {
+        //x是values[0]的值，X轴方向加速度，从左侧向右侧移动，values[0]为负值；从右向左移动，values[0]为正值
+        //y是values[1]的值，Y轴方向加速度，从上到下移动，values[1]为负值；从下往上移动，values[1]为正值
+        //不考虑Z轴上的数据，
+        if (Math.abs(x) > 6 && Math.abs(y) < 4) {
+            if (x > 6) {
+                return 270;
+            } else {
+                return 90;
+            }
+        } else if (Math.abs(y) > 6 && Math.abs(x) < 4) {
+            if (y > 6) {
+                return 0;
+            } else {
+                return 180;
+            }
+        }
+
+        return -1;
+    }
+
+
     //取得最佳分辨率
     private Size getOptimalPreviewSize(List<Size> sizes, int w, int h) {
 
@@ -337,12 +382,26 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
             if (Picturefile.exists()) {
                 Picturefile.delete();
             }
+            final Bitmap result;
+            //Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            Matrix matrix = new Matrix();
+            int rotation = (setCameraDisplayOrientation(mCamera1) + mSensorRotation) % 360;
+            if (cameraCurrentlyLocked == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                matrix.setRotate(rotation);
+            } else {
+                rotation = (270 - rotation) % 360;
+                matrix.setRotate(rotation);
+                matrix.postScale(-1, 1);
+            }
+            result = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
 
             try {
                 FileOutputStream fos = new FileOutputStream(Picturefile);
-                fos.write(data);
-                fos.close();
+                //fos.write(data);
+                result.compress(Bitmap.CompressFormat.JPEG, 100, fos);
 
+                fos.flush();
+                fos.close();
                 //再次重启相机继续预览
                 initCamera();
 

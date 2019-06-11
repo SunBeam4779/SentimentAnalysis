@@ -64,6 +64,7 @@
 				android:name=".PhotoBaseActivity"
 				android:label="拍摄基底"
 				android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
+		<activity android:name=".Crop"/>
 	</application>
 
 </manifest>
