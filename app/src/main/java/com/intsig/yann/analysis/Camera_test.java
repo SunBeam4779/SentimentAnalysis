@@ -61,6 +61,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         hideStatusBar();
+        hideNavigationBar();
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_camera);
 
@@ -505,6 +506,19 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         Window curWindow = this.getWindow();
         // 设置Flag标示
         curWindow.setFlags(flag, flag);
+    }
+
+    private void hideNavigationBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
+    }
+
+    private void showNavigationBar() {
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
+        decorView.setSystemUiVisibility(uiOptions);
     }
 
     protected void onPause() {

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -41,6 +42,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
     private static final int REQUEST_CROP = 104;
     private static final int REQUEST_ALBUM = 105;
     private static final int REQUEST_PERMISSION2 = 106;
+    private static final int REQUEST_TAKE_PICTURE = 107;
 
 
     private RelativeLayout emptyStatusRelativeLayout;
@@ -170,6 +172,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
 
     private class AnalysisDataCallback implements LoaderManager.LoaderCallbacks<Cursor> {
 
+        @NonNull
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             final String[] PROJECTION =
@@ -193,8 +196,13 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
             } else {
                 emptyStatusRelativeLayout.setVisibility(View.GONE);
                 historyRecyclerView.setVisibility(View.VISIBLE);
+
                 Cursor cursor = analysisDataAdapter.swapCursor(data);
-                Util.safeCloseCursor(cursor);
+                if (android.os.Build.VERSION.SDK_INT < 14) {
+
+                    Util.safeCloseCursor(cursor);
+                }
+
             }
 
         }
@@ -211,6 +219,9 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
                 doCropPhoto(currentPhotoFile, REQUEST_CROP);
+            } else if (requestCode == REQUEST_TAKE_PICTURE) {
+                doCropPicture();
+                Log.d("hey!!!", "look at me!");
             } else if (requestCode == REQUEST_ALBUM) {
                 if (resultCode == Activity.RESULT_OK) {
                     if (Build.VERSION.SDK_INT >= 19) {
@@ -222,6 +233,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                     }
                 }
             } else if (requestCode == REQUEST_CROP) {
+
                 String cropFilePath = null;
                 if (new File(TempCropFile).exists()) {
                     cropFilePath = TempCropFile;
@@ -238,8 +250,12 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                 }
                 String time = Util.getDateAsName();
                 File PHOTO_DIR = new File(Util.THUMB_IMG);
-                PHOTO_DIR.mkdirs();
+                if (!PHOTO_DIR.exists()) {
+                    PHOTO_DIR.mkdirs();
+                }
+
                 Util.copyFile(TempCropFile, Util.THUMB_IMG + "/" + time + ".jpg");
+
                 Util.copyFile(currentPhotoFile.getAbsolutePath(), Util.ORIGINAL_IMG + "/" + time + ".jpg");
                 new File(cropFilePath).delete();
                 if (currentPhotoFile != null && currentPhotoFile.exists()) {
@@ -306,7 +322,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         if (PHOTO_DIR.exists()) {
             currentPhotoFile = new File(PHOTO_DIR, time + ".jpg");
         }
-        startActivityForResult(intent, REQUEST_CAMERA);
+        startActivityForResult(intent, REQUEST_TAKE_PICTURE);
     }
 
     private void openAlbum() {
@@ -362,6 +378,13 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         } catch (Exception e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void doCropPicture() {
+        Intent intent = new Intent(this, Crop.class);
+        intent.putExtra("uri", currentPhotoFile.toString());
+
+        startActivityForResult(intent, REQUEST_CROP);
     }
 
     @TargetApi(19)

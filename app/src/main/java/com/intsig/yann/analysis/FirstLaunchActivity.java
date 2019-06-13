@@ -17,6 +17,7 @@ import androidx.core.content.PermissionChecker;
 
 public class FirstLaunchActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION = 102;
+    public static final boolean IS_LOGIN = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
