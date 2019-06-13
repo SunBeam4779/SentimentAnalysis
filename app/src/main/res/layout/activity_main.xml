@@ -103,7 +103,7 @@
 			    android:layout_height="wrap_content"
 
 			    android:clickable="true"
-			    android:src="@drawable/pick_icon_background2"
+			    android:src="@mipmap/album"
 			    android:layout_marginLeft="74dp"
 			    android:layout_marginStart="74dp"
 			    android:layout_alignParentBottom="true"
@@ -112,10 +112,10 @@
 
 	    <ImageView
 			    android:id="@+id/photo_image"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
+			    android:layout_width="57dp"
+			    android:layout_height="match_parent"
 			    android:clickable="true"
-			    android:src="@drawable/pick_icon_background"
+			    android:src="@mipmap/camera"
 			    android:layout_marginLeft="74dp"
 			    android:layout_marginStart="74dp"
 			    android:layout_centerVertical="true"

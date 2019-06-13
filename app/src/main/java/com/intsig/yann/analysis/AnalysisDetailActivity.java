@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class AnalysisDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_analysis_detail);
         initFromXml();
         initData();
@@ -73,10 +75,10 @@ public class AnalysisDetailActivity extends AppCompatActivity {
     }
 
     private void initFromXml() {
-        photoImageView = (ImageView) findViewById(R.id.photo_ImageView);
-        myPhotoImageView = (ImageView) findViewById(R.id.my_photo_ImageView);
-        detailTextView = (TextView) findViewById(R.id.detail_TextView);
-        saveButton = (Button)findViewById(R.id.save_Button);
+        photoImageView = findViewById(R.id.photo_ImageView);
+        myPhotoImageView = findViewById(R.id.my_photo_ImageView);
+        detailTextView = findViewById(R.id.detail_TextView);
+        saveButton = findViewById(R.id.save_Button);
     }
 
     private void initData() {

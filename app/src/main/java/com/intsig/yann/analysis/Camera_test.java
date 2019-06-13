@@ -62,6 +62,7 @@ public class Camera_test extends AppCompatActivity implements SurfaceHolder.Call
         super.onCreate(savedInstanceState);
         hideStatusBar();
         hideNavigationBar();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_camera);
 
