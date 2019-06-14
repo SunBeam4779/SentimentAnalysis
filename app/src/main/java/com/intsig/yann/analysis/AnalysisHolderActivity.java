@@ -223,11 +223,13 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
                 doCropPhoto(currentPhotoFile, REQUEST_CROP);
             } else if (requestCode == REQUEST_TAKE_PICTURE) {
                 doCropPicture();
-                Log.d("hey!!!", "look at me!");
+
             } else if (requestCode == REQUEST_ALBUM) {
                 if (resultCode == Activity.RESULT_OK) {
+
                     if (Build.VERSION.SDK_INT >= 19) {
                         //4.4及以上系统使用这个方法处理图片
+
                         handleImageOnKitKat(data);
                     } else {
                         //4.4以下系统使用这个方法处理图片
@@ -349,6 +351,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         }
 
         try {
+
             File cfile = new File(TempCropFile);
             if (cfile.exists()) {
                 cfile.delete();
@@ -376,7 +379,9 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
             intent.putExtra("return-data", false);// 某些图片剪切出来的bitmap 会很大，导致 intent transaction
             // faield。
             intent.putExtra("noFaceDetection", true);
+
             startActivityForResult(intent, requestCode);
+            Log.d("hey!!!", "look at me!");
         } catch (Exception e) {
             Toast.makeText(this, R.string.photoPickerNotFoundText, Toast.LENGTH_LONG).show();
         }
@@ -396,7 +401,7 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
         if (DocumentsContract.isDocumentUri(this, uri)) {
             String docId = DocumentsContract.getDocumentId(uri);
             if ("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(".")[1];//解析出数字格式的id
+                String id = docId.split(":")[1];//解析出数字格式的id
                 String selection = MediaStore.Images.Media._ID + "=" + id;
                 imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
@@ -410,14 +415,20 @@ public class AnalysisHolderActivity extends AppCompatActivity implements View.On
             //如果是file类型的Uri，直接获取图片路径即可
             imagePath = uri.getPath();
         }
+
         File currentPhotoFile = new File(imagePath);
-        Util.copyFile(imagePath, myBigImage);
+        //Util.copyFile(imagePath, myBigImage);
+
+        Util.copyFile(currentPhotoFile.getAbsolutePath(), myBigImage);
+
         doCropPhoto(currentPhotoFile, REQUEST_CROP);
     }
 
     private void handleImageBeforeKitKat(Intent data) {
         Uri uri = data.getData();
         String imagePath = getImagePath(uri, null);
+        File currentPhotoFile = new File(imagePath);
+        Util.copyFile(currentPhotoFile.toString(), imagePath);
         doCropPhoto(currentPhotoFile, REQUEST_CROP);
     }
 
